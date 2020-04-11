@@ -43,18 +43,6 @@ public class Graph {
         Vertex vertexB = vertices.get(edge.getHeadId());
         Integer newId = getHighestId()+1;
         Vertex newVertex = Vertex.ofTwoVertices(vertexA, vertexB, newId);
-
-        vertexA.getAdjacencyList().forEach(integer -> {
-            if (vertices.get(integer)==null){
-                System.out.println("");
-            }
-        });
-        vertexB.getAdjacencyList().forEach(integer -> {
-            if (vertices.get(integer)==null){
-                System.out.println("");
-            }
-        });
-
         vertexA.getAdjacencyList().forEach(index -> vertices.get(index).upinVertexReference(vertexA));
         vertexB.getAdjacencyList().forEach(index -> vertices.get(index).upinVertexReference(vertexB));
         newVertex.getAdjacencyList().forEach(index -> vertices.get(index).addToAdjacencyList(newId));

@@ -50,9 +50,7 @@ public class RandomizedContractionSolver {
 
     private Edge pickRandomEdge(List<Edge> edges) {
         Random rand = new Random(System.currentTimeMillis());
-        System.out.println(edges.size());
         int index = rand.nextInt(edges.size()-1);
-        System.out.println("random index: " + index);
         return edges.get(index);
     }
 
