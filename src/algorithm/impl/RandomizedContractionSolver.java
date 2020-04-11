@@ -2,10 +2,13 @@ package algorithm.impl;
 
 import algorithm.model.Edge;
 import algorithm.model.Graph;
+import algorithm.model.Vertex;
+import reader.DataReader;
 
-/**
- *
- */
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 public class RandomizedContractionSolver {
 
 //    code up and run the randomized contraction algorithm for the min cut problem and use
@@ -16,31 +19,41 @@ public class RandomizedContractionSolver {
 //    (WARNING: As per the video lectures, please make sure to run the algorithm many
 //    times with di?erent random seeds, and remember the smallest cut that you ever find.)
 
-    private int numberOfIterations;
-    private int lowestMinCut = Integer.MAX_VALUE;
+    private String inputFilePath;
+    private int lowestMinCut;
 
-    public int calculateMinCut(file) {
-        numberOfIterations = (int)Math.pow(Vertices.size(), 3);
+    public RandomizedContractionSolver(String inputFilePath) {
+        this.inputFilePath = inputFilePath;
+        this.lowestMinCut = Integer.MAX_VALUE;
+    }
+
+    public int calculateMinCut() {
+        Graph graph = DataReader.getGraphFromFile(this.inputFilePath);
+        int numberOfIterations = (int)(Math.pow(graph.getVertices().size(), 2) * Math.log(graph.getVertices().size()));
         for(int i=0;i<numberOfIterations;i++){
-            MyReader reader = new MyReader(file);
-            Graph copyGraph = new Graph(vertices);
+            Graph copyGraph = DataReader.getGraphFromFile(this.inputFilePath);
             int tempScore = mainLoop(copyGraph);
             if(tempScore < lowestMinCut) {
                 lowestMinCut = tempScore;
             }
         }
+        return lowestMinCut;
     }
 
     private int mainLoop(Graph graph) {
         while(graph.getVertices().size() > 2) {
-            Edge randomPickedEdge = pickRandomEdge();
-            graph.contract(randomPickedEdge);
+            Edge randomPickedEdge = pickRandomEdge(graph.getEdges());
+            graph = graph.contract(randomPickedEdge);
         }
         return graph.getEdges().size();
     }
 
-    private Edge pickRandomEdge() {
-        return null;
+    private Edge pickRandomEdge(List<Edge> edges) {
+        Random rand = new Random(System.currentTimeMillis());
+        System.out.println(edges.size());
+        int index = rand.nextInt(edges.size()-1);
+        System.out.println("random index: " + index);
+        return edges.get(index);
     }
 
 }

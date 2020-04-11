@@ -24,6 +24,13 @@ public class Edge {
         return headId;
     }
 
+    public void redirect(Edge other, int newId) {
+        if(this.getTailId().equals(other.getTailId()) || this.getTailId().equals(other.getHeadId()))
+            this.tailId = newId;
+        if(this.getHeadId().equals(other.getTailId()) || this.getHeadId().equals(other.getHeadId()))
+            this.headId = newId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

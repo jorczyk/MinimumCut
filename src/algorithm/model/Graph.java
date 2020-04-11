@@ -12,7 +12,11 @@ public class Graph {
 
     public Graph(Map<Integer, Vertex> vertices) {
         this.vertices = vertices;
-        this.edges = vertices.values().stream().map(this::createEdgesFormVertex).flatMap(Set::stream).collect(Collectors.toList());
+        this.edges = vertices.values()
+                .stream()
+                .map(this::createEdgesFormVertex)
+                .flatMap(Set::stream)
+                .collect(Collectors.toList());
     }
 
     public Map<Integer, Vertex> getVertices() {
@@ -23,14 +27,39 @@ public class Graph {
         return edges;
     }
 
-    public void contract(Edge edge) {
+    public Graph contract(Edge edge) {
+        int contractedVertexId = createContractedVertex(edge);
         this.edges.remove(edge);
-        this.vertices.remove(edge.getHeadId());
-        this.vertices.remove(edge.getTailId());
+        redirectEdges(edge, contractedVertexId);
+        return this;
+    }
+
+    private void redirectEdges(Edge edge, int newId) {
+        this.edges.forEach(e -> e.redirect(edge, newId));
+    }
+
+    private int createContractedVertex(Edge edge) {
         Vertex vertexA = vertices.get(edge.getTailId());
         Vertex vertexB = vertices.get(edge.getHeadId());
-        Integer newId = getHighestId();
-        this.vertices.put(newId, Vertex.ofTwoVertices(vertexA, vertexB, newId));
+        Integer newId = getHighestId()+1;
+        Vertex newVertex = Vertex.ofTwoVertices(vertexA, vertexB, newId);
+
+        vertexA.getAdjacencyList().forEach(integer -> {
+            if (vertices.get(integer)==null){
+                System.out.println("");
+            }
+        });
+        vertexB.getAdjacencyList().forEach(integer -> {
+            if (vertices.get(integer)==null){
+                System.out.println("");
+            }
+        });
+
+        vertexA.getAdjacencyList().forEach(index -> vertices.get(index).upinVertexReference(vertexA));
+        vertexB.getAdjacencyList().forEach(index -> vertices.get(index).upinVertexReference(vertexB));
+        newVertex.getAdjacencyList().forEach(index -> vertices.get(index).addToAdjacencyList(newId));
+        this.vertices.put(newId, newVertex);
+        return newId;
     }
 
     private Set<Edge> createEdgesFormVertex(Vertex vertex) {
@@ -40,7 +69,7 @@ public class Graph {
     }
 
     private Integer getHighestId() {
-        return this.vertices.keySet().stream().max(Integer::compare).get();
+        return this.vertices.keySet().stream().max(Integer::compare).orElse(-1);
     }
 
 }

@@ -1,5 +1,6 @@
 package algorithm.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,18 +29,29 @@ public class Vertex {
         return new Vertex(id, mergeAdjacencyLists(tail, head));
     }
 
+    public void upinVertexReference(Vertex vertex) {
+        this.adjacencyList = this.adjacencyList.stream()
+                .filter(index -> !index.equals(vertex.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public void addToAdjacencyList(Integer id) {
+        this.adjacencyList.add(id);
+    }
+
     private static List<Integer> mergeAdjacencyLists(Vertex a, Vertex b) {
-        //TODO: re-implement
-        //remove all self loops
-        //iterate over all external and change refs
+        List<Integer> listA = new ArrayList<>();
+        listA.addAll(a.getAdjacencyList());
+        List<Integer> listB = new ArrayList<>();
+        listB.addAll(b.getAdjacencyList());
+        return Stream.concat(listA.stream(), listB.stream()).collect(Collectors.toList());
+    }
 
-
-        Set<Integer> setA = new HashSet<>();
-        setA.addAll(a.getAdjacencyList());
-        setA.remove(b.getId());
-        Set<Integer> setB = new HashSet<>();
-        setB.addAll(b.getAdjacencyList());
-        setB.remove(a.getId());
-        return Stream.concat(setA.stream(), setB.stream()).collect(Collectors.toSet());
+    @Override
+    public String toString() {
+        return "Vertex{" +
+                "id=" + id +
+                ", adjacencyList=" + adjacencyList +
+                '}';
     }
 }
